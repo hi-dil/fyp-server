@@ -7,8 +7,7 @@ const getAllStorageData = async (req, res) => {
 }
 
 const updatePinNumbers = async (req, res) => {
-    let storageID = "sdfajhsglk"
-    let pin = []
+    let storageID = "SfbClQ6PRR9UKREP5BwO"
     db.database().ref(`/${storageID}/PIN`).once('value', (snapshot) => {
         // let storagePIN = 2345
         // pin = snapshot.val()
@@ -26,15 +25,58 @@ const updatePinNumbers = async (req, res) => {
         var test = {}
         test = snapshot.val()
 
-        res.status(200).send(snapshot.val())
+        res.status(200).send(test)
     })
 }
 
+const validatePIN = async (req, res) => {
+    const { retrievedPin, storageID } = req.body
+    const { authorization } = req.headers
+
+    if (authorization === "haidil272") {
+        db.database().ref(`/${storageID}`).once('value', (snapshot) => {
+            test = snapshot.val()
+            const { PIN, storageName, isUnlock, depth } = test
+
+            if (PIN[retrievedPin] !== undefined) {
+                const { dayCreated, requestID } = PIN[retrievedPin]
+                const now = Date.now()
+                const dayInMilli = 86400000
+
+                if (now - dayCreated < dayInMilli) {
+                    db.database().ref(`/${storageID}`).set({
+                        PIN: PIN,
+                        storageName: storageName,
+                        isUnlock: true,
+                        depth: depth
+                    }, (error) => {
+                        if (error) {
+                            res.send(false)
+                        } else {
+                            res.send(true)
+                        }
+                    })
+
+                } else {
+                    res.send(false)
+                }
+            } else {
+                res.send(false)
+            }
+        })
+    } else {
+        res.status(403).send("Forbidden")
+    }
+}
+
 const putPIN = async (req, res) => {
-    let storageID = "sdfajhsglk"
+    let storageID = "SfbClQ6PRR9UKREP5BwO"
+    const now = Date.now()
     let pin = {
-        "234523": { "dayCreated": 243298098, "requestID": 22355 },
-        "230504": {"dayCreated": 23985908, "requestID": 250925}}
+        "234523": { "dayCreated": now, "requestID": "22355" },
+        "230504": { "dayCreated": 23985908, "requestID": "250925" },
+        "985294": { "dayCreatd": 252452452452, "requestID": "08345430985" }
+    }
 
     db.database().ref('/' + storageID).set({
         PIN: pin,
@@ -53,5 +95,6 @@ const putPIN = async (req, res) => {
 module.exports = {
     getAllStorageData,
     updatePinNumbers,
-    putPIN
+    putPIN,
+    validatePIN
 }

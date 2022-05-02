@@ -14,9 +14,11 @@ const ref = db.ref('/StorageData')
 
 // calling router
 const storageRouter = require('./routes/storage')
+const { urlencoded } = require('body-parser')
 
 // middleware
 app.use(express.json())
+app.use(urlencoded({ extended: false }))
 
 // routes
 
