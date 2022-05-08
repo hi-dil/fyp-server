@@ -39,9 +39,52 @@ const validatePIN = async (req, res) => {
             const { PIN, storageName, isUnlock, depth } = test
 
             if (PIN[retrievedPin] !== undefined) {
-                const { dayCreated, requestID } = PIN[retrievedPin]
+                const { dayCreated } = PIN[retrievedPin]
                 const now = Date.now()
                 const dayInMilli = 86400000
+
+                if (now - dayCreated < dayInMilli) {
+                    // db.database().ref(`/${storageID}`).set({
+                    //     PIN: PIN,
+                    //     storageName: storageName,
+                    //     isUnlock: true,
+                    //     depth: depth
+                    // }, (error) => {
+                    //     if (error) {
+                    //         res.send(false)
+                    //     } else {
+                    //         res.send(true)
+                    //     }
+                    // })
+                    res.status(200).send(true)
+
+                } else {
+                    res.status(500).send(false)
+                }
+            } else {
+                res.status(500).send(false)
+            }
+        })
+    } else {
+        res.status(403).send("Forbidden")
+    }
+}
+
+const motionDetected = async (req, res) => {
+    const { retrievedPin, storageID } = req.body
+    const { authorization } = req.headers
+
+    if (authorization === "haidil272") {
+        db.database().ref(`/${storageID}`).once('value', (snapshot) => {
+            test = snapshot.val()
+            const { PIN, storageName, isUnlock, depth } = test
+
+            if (PIN[retrievedPin] !== undefined) {
+                const { dayCreated } = PIN[retrievedPin]
+                const now = Date.now()
+                const dayInMilli = 86400000
+
+                delete PIN[retrievedPin]
 
                 if (now - dayCreated < dayInMilli) {
                     db.database().ref(`/${storageID}`).set({
@@ -56,12 +99,13 @@ const validatePIN = async (req, res) => {
                             res.send(true)
                         }
                     })
+                    res.status(200).send(true)
 
                 } else {
-                    res.send(false)
+                    res.status(500).send(false)
                 }
             } else {
-                res.send(false)
+                res.status(500).send(false)
             }
         })
     } else {
@@ -74,8 +118,8 @@ const putPIN = async (req, res) => {
     const now = Date.now()
     let pin = {
         "234523": { "dayCreated": now, "requestID": "22355" },
-        "230504": { "dayCreated": 23985908, "requestID": "250925" },
-        "985294": { "dayCreatd": 252452452452, "requestID": "08345430985" }
+        "230504": { "dayCreated": now, "requestID": "250925" },
+        "985294": { "dayCreated": now, "requestID": "08345430985" }
     }
 
     db.database().ref('/' + storageID).set({
@@ -96,5 +140,6 @@ module.exports = {
     getAllStorageData,
     updatePinNumbers,
     putPIN,
-    validatePIN
+    validatePIN,
+    motionDetected
 }
