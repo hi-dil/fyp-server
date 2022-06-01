@@ -3,7 +3,8 @@ require('express-async-errors')
 
 const express = require('express')
 const app = express()
-const connectFirebase = require('./db/connect')
+const {admin} = require('./db/connect')
+const connectFirebase = admin
 
 const notFoundMiddleware = require('./middleware/not_found')
 const errorMiddleware = require('./middleware/error_handler')
