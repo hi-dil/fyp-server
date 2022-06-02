@@ -265,7 +265,7 @@ async function updateClaim(storageID, requestID) {
   await firestore
     .collection("foodBank")
     .doc(request["foodBankID"])
-    .update({ storage: foodbankStorage });
+    .update({ storage: foodBankStorage });
   await firestore
     .collection("foodBankStorage")
     .doc(storageID)
