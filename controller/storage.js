@@ -242,6 +242,7 @@ async function updateClaim(storageID, requestID) {
     if (storageID == item["storageID"]) {
       item["completed"] = true;
       amountTook = item["itemQuantity"];
+      item["lastUpdate"] = Date.now();
     }
   });
 
@@ -295,17 +296,21 @@ async function updateDonation(storageID, requestID) {
     .collection("foodBank")
     .doc(foodbankID)
     .get();
-    
+
   const foodbankInfo = snapshotFoodBank.data();
 
   foodbankStorage = foodbankInfo["storage"];
   const requestItem = request["items"];
 
+
+  request["lastUpdate"] = Date.now();
+  
   var amountTook = 0;
   requestItem.forEach((item) => {
     if (storageID == item["storageID"]) {
       item["completed"] = true;
       amountTook = item["itemQuantity"];
+      item["lastUpdate"] = Date.now();
     }
   });
 
