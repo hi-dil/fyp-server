@@ -261,7 +261,9 @@ async function updateClaim(storageID, requestID) {
     requestType: "claim",
   };
 
-  const accessUpdate = storageInfo["accessHistory"].push(accessHistoryUpdate);
+  const accessUpdate = storageInfo["accessHistory"];
+  accessUpdate.push(accessHistoryUpdate);
+  console.log(accessUpdate);
 
   await firestore
     .collection("foodBank")
