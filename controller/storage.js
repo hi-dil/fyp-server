@@ -238,7 +238,7 @@ async function updateClaim(storageID, requestID) {
   const foodBankStorage = foodBankInfo["storage"];
   var amountTook = 0;
 
-  requestItem.forEach((item) => {
+  await requestItem.forEach((item) => {
     if (storageID == item["storageID"]) {
       item["completed"] = true;
       amountTook = item["itemQuantity"];
@@ -246,7 +246,7 @@ async function updateClaim(storageID, requestID) {
     }
   });
 
-  foodBankStorage.forEach((storageUpdate) => {
+  await foodBankStorage.forEach((storageUpdate) => {
     if (storageID == storageUpdate["id"]) {
       storageUpdate["amountClaimed"] += amountTook;
     }
