@@ -53,18 +53,6 @@ const validatePIN = async (req, res) => {
           const dayInMilli = 86400000;
 
           if (now - dayCreated < dayInMilli) {
-            // db.database().ref(`/${storageID}`).set({
-            //     PIN: PIN,
-            //     storageName: storageName,
-            //     isUnlock: true,
-            //     depth: depth
-            // }, (error) => {
-            //     if (error) {
-            //         res.send(false)
-            //     } else {
-            //         res.send(true)
-            //     }
-            // })
             res.status(200).send(true);
           } else {
             res.status(500).send(false);
